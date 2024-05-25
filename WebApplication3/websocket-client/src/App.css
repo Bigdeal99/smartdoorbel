@@ -2,37 +2,77 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 20px;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  position: relative; /* Make the content relative for positioning the gallery */
+  flex-direction: column; /* Arrange items in a column */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.video-container {
+  flex: 2;
+  padding: 20px;
+  max-width: 800px; /* Set max width for video container */
+  margin: 0 auto; /* Center the video container */
+}
+
+.video {
+  width: 100%;
+  height: 450px; /* Set a fixed height similar to YouTube video */
+  border: 1px solid black;
+}
+
+.controls {
+  margin: 20px;
+  display: flex;
+  justify-content: center; /* Center the buttons */
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  background-color: #61dafb;
+  color: #282c34;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+.image-gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow-y: auto;
+  height: 500px; /* Adjust based on the desired height */
+  width: 200px; /* Adjust based on the desired width */
+  position: absolute;
+  top: 20px; /* Adjust based on header height */
+  right: 20px; /* Adjust based on desired margin from the right */
+  border: 1px solid #ccc;
+  background-color: white; /* Add background color for better visibility */
+  padding: 10px; /* Add padding for better layout */
+}
+
+.image-container {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
 }
