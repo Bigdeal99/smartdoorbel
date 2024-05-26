@@ -18,15 +18,15 @@ public class ImagesController : ControllerBase
     public async Task<IActionResult> GetImages()
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient("iot-10sec-video");
-        var imageUrls = new List<string>();
+        var images = new List<object>();
 
         await foreach (var blobItem in containerClient.GetBlobsAsync())
         {
             var uri = containerClient.GetBlobClient(blobItem.Name).Uri;
-            imageUrls.Add(uri.ToString());
+            images.Add(new { Url = uri.ToString(), Name = blobItem.Name });
         }
 
-        return Ok(imageUrls);
+        return Ok(images);
     }
 
     [HttpDelete("{fileName}")]

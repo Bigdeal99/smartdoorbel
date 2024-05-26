@@ -48,15 +48,15 @@ app.UseEndpoints(endpoints =>
     {
         var blobServiceClient = context.RequestServices.GetRequiredService<BlobServiceClient>();
         var containerClient = blobServiceClient.GetBlobContainerClient("iot-10sec-video");
-        var imageUrls = new List<string>();
+        var images = new List<object>();
 
         await foreach (var blobItem in containerClient.GetBlobsAsync())
         {
             var uri = containerClient.GetBlobClient(blobItem.Name).Uri;
-            imageUrls.Add(uri.ToString());
+            images.Add(new { Url = uri.ToString(), Name = blobItem.Name });
         }
 
-        await context.Response.WriteAsJsonAsync(imageUrls);
+        await context.Response.WriteAsJsonAsync(images);
     });
 
     endpoints.MapDelete("/api/images/{fileName}", async context =>

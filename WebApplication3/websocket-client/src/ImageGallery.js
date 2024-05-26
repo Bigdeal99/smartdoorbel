@@ -21,15 +21,14 @@ const ImageGallery = () => {
         fetchImages();
     }, []);
 
-    const deleteImage = async (url) => {
-        const fileName = url.split('/').pop();
+    const deleteImage = async (fileName) => {
         try {
             const response = await fetch(`http://localhost:5164/api/images/${fileName}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
-                setImages(images.filter((image) => image !== url));
+                setImages(images.filter((image) => image.Name !== fileName));
             } else {
                 console.error('Failed to delete image');
             }
@@ -40,10 +39,11 @@ const ImageGallery = () => {
 
     return (
         <div className="image-gallery">
-            {images.map((url, index) => (
+            {images.map((image, index) => (
                 <div key={index} className="image-container">
-                    <img src={url} alt={`Stream ${index}`} />
-                    <button onClick={() => deleteImage(url)}>Delete</button>
+                    <img src={image.Url} alt={`Stream ${index}`} />
+                    <p>{image.Name}</p>
+                    <button onClick={() => deleteImage(image.Name)}>Delete</button>
                 </div>
             ))}
         </div>
