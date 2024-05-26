@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:3000") // Adjust to match your frontend URL
+        builder.WithOrigins("http://172.20.10.2:3000") // Adjust to match your frontend URL
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
