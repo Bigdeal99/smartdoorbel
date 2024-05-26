@@ -16,6 +16,9 @@ builder.Services.AddSingleton(sp =>
     return new BlobServiceClient(uri);
 });
 
+// Add services to the container
+builder.Services.AddControllers();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
@@ -44,45 +47,7 @@ app.UseCors();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapGet("/api/images", async context =>
-    {
-        var blobServiceClient = context.RequestServices.GetRequiredService<BlobServiceClient>();
-        var containerClient = blobServiceClient.GetBlobContainerClient("iot-10sec-video");
-        var imageUrls = new List<string>();
-
-        await foreach (var blobItem in containerClient.GetBlobsAsync())
-        {
-            var uri = containerClient.GetBlobClient(blobItem.Name).Uri;
-            imageUrls.Add(uri.ToString());
-        }
-
-        await context.Response.WriteAsJsonAsync(imageUrls);
-    });
-
-    endpoints.MapDelete("/api/images/{fileName}", async context =>
-    {
-        var fileName = context.Request.RouteValues["fileName"]?.ToString();
-        if (string.IsNullOrEmpty(fileName))
-        {
-            context.Response.StatusCode = 400; // Bad Request
-            await context.Response.WriteAsync("File name is required.");
-            return;
-        }
-
-        var blobServiceClient = context.RequestServices.GetRequiredService<BlobServiceClient>();
-        var containerClient = blobServiceClient.GetBlobContainerClient("iot-10sec-video");
-        var blobClient = containerClient.GetBlobClient(fileName);
-
-        if (await blobClient.ExistsAsync())
-        {
-            await blobClient.DeleteAsync();
-            context.Response.StatusCode = 204; // No Content
-        }
-        else
-        {
-            context.Response.StatusCode = 404; // Not Found
-        }
-    });
+    endpoints.MapControllers();
 
     endpoints.MapGet("/", async context =>
     {

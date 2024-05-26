@@ -29,7 +29,7 @@ const ImageGallery = () => {
             });
 
             if (response.ok) {
-                setImages(images.filter((image) => image !== url));
+                setImages(images.filter((image) => image.url !== url));
             } else {
                 console.error('Failed to delete image');
             }
@@ -40,10 +40,11 @@ const ImageGallery = () => {
 
     return (
         <div className="image-gallery">
-            {images.map((url, index) => (
+            {images.map((image, index) => (
                 <div key={index} className="image-container">
-                    <img src={url} alt={`Stream ${index}`} />
-                    <button onClick={() => deleteImage(url)}>Delete</button>
+                    <img src={image.url} alt={`Stream ${index}`} />
+                    <p>{image.fileName}</p>
+                    <button onClick={() => deleteImage(image.url)}>Delete</button>
                 </div>
             ))}
         </div>
