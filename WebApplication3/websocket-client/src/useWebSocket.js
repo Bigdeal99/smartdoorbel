@@ -59,7 +59,13 @@ const useWebSocket = (url) => {
         }
     };
 
-    return { isStreaming, startStreaming, stopStreaming, imageRef };
+    const sendMessage = (message) => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(message);
+        }
+    };
+
+    return { isStreaming, startStreaming, stopStreaming, imageRef, sendMessage };
 };
 
 export default useWebSocket;
