@@ -8,8 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure services
 builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
+builder.WebHost.UseUrls("http://*:9999");
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8181";
+
 builder.Services.AddSingleton<WebSocketServerManager>(sp =>
-    new WebSocketServerManager("ws://0.0.0.0:8181", builder.Configuration.GetConnectionString("DefaultConnection")));
+    new WebSocketServerManager("ws://0.0.0.0:"+port, builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add controllers
 builder.Services.AddControllers();
