@@ -1,28 +1,57 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Infrastructure;
+using MyProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.AddSingleton<WebSocketServerManager>(new WebSocketServerManager("ws://0.0.0.0:8181", Utilities.ProperlyFormattedConnectionString));
+// Configure services
+builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
+builder.Services.AddSingleton<WebSocketServerManager>(sp =>
+    new WebSocketServerManager("ws://0.0.0.0:8181", builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add controllers
+builder.Services.AddControllers();
+
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+// Configure Kestrel
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5164);
+    serverOptions.ListenAnyIP(7026, listenOptions => listenOptions.UseHttps());
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 
+app.UseRouting();
+app.UseCors();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapGet("/", async context =>
+    {
+        await context.Response.WriteAsync("API and WebSocket server are running.");
+    });
+});
+
 // Start WebSocket Server
 var webSocketServerManager = app.Services.GetRequiredService<WebSocketServerManager>();
 webSocketServerManager.Start();
-
-app.Run(async (context) =>
-{
-    await context.Response.WriteAsync("WebSocket server is running.");
-});
 
 app.Run();
