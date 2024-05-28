@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Azure.Storage.Blobs;
-using System.Collections.Generic;
+using Azure.Storage.Blobs.Models;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 [Route("api/[controller]")]
@@ -48,5 +50,24 @@ public class ImagesController : ControllerBase
         }
 
         return NotFound();
+    }
+
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadImage([FromQuery] string timestamp)
+    {
+        var containerClient = _blobServiceClient.GetBlobContainerClient("iot-10sec-video");
+
+        using (var stream = new MemoryStream())
+        {
+            await Request.Body.CopyToAsync(stream);
+            stream.Position = 0;
+
+            var fileName = $"{timestamp}.jpg";
+            var blobClient = containerClient.GetBlobClient(fileName);
+
+            await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = "image/jpeg" });
+
+            return Ok(new { fileName });
+        }
     }
 }
