@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.Services.AddSingleton<WebSocketServerManager>(new WebSocketServerManager("ws://0.0.0.0:8181"));
+builder.Services.AddSingleton<WebSocketServerManager>(new WebSocketServerManager("ws://0.0.0.0:8181", Utilities.ProperlyFormattedConnectionString));
 
 var app = builder.Build();
 

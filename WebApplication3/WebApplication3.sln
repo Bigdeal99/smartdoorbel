@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication3", "WebAppli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageApi", "ImageApi\ImageApi.csproj", "{E14D0BD7-3822-4156-A4D2-C337860DEBD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{869AFE6C-0936-40AE-8F97-E3623CD6B614}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{E14D0BD7-3822-4156-A4D2-C337860DEBD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E14D0BD7-3822-4156-A4D2-C337860DEBD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E14D0BD7-3822-4156-A4D2-C337860DEBD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869AFE6C-0936-40AE-8F97-E3623CD6B614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869AFE6C-0936-40AE-8F97-E3623CD6B614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869AFE6C-0936-40AE-8F97-E3623CD6B614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869AFE6C-0936-40AE-8F97-E3623CD6B614}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

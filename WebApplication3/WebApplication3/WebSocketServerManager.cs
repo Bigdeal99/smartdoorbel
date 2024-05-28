@@ -6,6 +6,7 @@ using Fleck;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
+using Npgsql;
 
 public class WebSocketServerManager
 {
@@ -13,11 +14,13 @@ public class WebSocketServerManager
     private readonly ConcurrentDictionary<IWebSocketConnection, string> _connections;
     private bool _isStreaming = false;
     private IMqttClient _mqttClient;
+    private readonly string _connectionString;
 
-    public WebSocketServerManager(string location)
+    public WebSocketServerManager(string location, string connectionString)
     {
         _server = new WebSocketServer(location);
         _connections = new ConcurrentDictionary<IWebSocketConnection, string>();
+        _connectionString = connectionString;
         InitializeMqttClient().GetAwaiter().GetResult();
     }
 
@@ -65,11 +68,13 @@ public class WebSocketServerManager
             case "camera/start":
                 _isStreaming = true;
                 Broadcast("START_STREAM");
+                SaveMessageToDatabase("START_STREAM");
                 Console.WriteLine("Start streaming command received from MQTT");
                 break;
             case "camera/stop":
                 _isStreaming = false;
                 Broadcast("STOP_STREAM");
+                SaveMessageToDatabase("STOP_STREAM");
                 Console.WriteLine("Stop streaming command received from MQTT");
                 break;
             default:
@@ -122,11 +127,13 @@ public class WebSocketServerManager
                     _isStreaming = true;
                     Console.WriteLine("Start command received");
                     _mqttClient.PublishAsync("camera/start", "START_STREAM");
+                    SaveMessageToDatabase("START_STREAM");
                     break;
                 case "STOP_STREAM":
                     _isStreaming = false;
                     Console.WriteLine("Stop command received");
                     _mqttClient.PublishAsync("camera/stop", "STOP_STREAM");
+                    SaveMessageToDatabase("STOP_STREAM");
                     break;
                 default:
                     Console.WriteLine("Unknown command received");
@@ -175,5 +182,17 @@ public class WebSocketServerManager
                 socket.Send(data);
             }
         }
+    }
+
+    private void SaveMessageToDatabase(string message)
+    {
+        using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+
+        using var cmd = new NpgsqlCommand("INSERT INTO messages (message, timestamp) VALUES (@message, @timestamp)", conn);
+        cmd.Parameters.AddWithValue("message", message);
+        cmd.Parameters.AddWithValue("timestamp", DateTime.UtcNow);
+
+        cmd.ExecuteNonQuery();
     }
 }
