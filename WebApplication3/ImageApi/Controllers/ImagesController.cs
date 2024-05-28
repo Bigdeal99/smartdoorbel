@@ -23,7 +23,7 @@ public class ImagesController : ControllerBase
         var options = new MqttClientOptionsBuilder()
             .WithClientId("API_Client")
             .WithTcpServer("mqtt.flespi.io", 1883)
-            .WithCredentials("YOUR_FLESPI_TOKEN_FOR_API", "")
+            .WithCredentials("zomufnJ4kljspMzkeTjAf38E9gfaMAp7Qvd1u3QboArEtJnUTrfkOYke86fYSeu8", "")
             .WithCleanSession()
             .Build();
 
