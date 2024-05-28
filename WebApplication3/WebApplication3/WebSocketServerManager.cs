@@ -13,11 +13,13 @@ public class WebSocketServerManager
     private readonly ConcurrentDictionary<IWebSocketConnection, string> _connections;
     private bool _isStreaming = false;
     private IMqttClient _mqttClient;
+    private readonly DatabaseManager _databaseManager;
 
     public WebSocketServerManager(string location)
     {
         _server = new WebSocketServer(location);
         _connections = new ConcurrentDictionary<IWebSocketConnection, string>();
+        _databaseManager = new DatabaseManager();
         InitializeMqttClient().GetAwaiter().GetResult();
     }
 
@@ -64,11 +66,13 @@ public class WebSocketServerManager
         {
             case "camera/start":
                 _isStreaming = true;
+                _databaseManager.SaveMessage("START_STREAM");
                 Broadcast("START_STREAM");
                 Console.WriteLine("Start streaming command received from MQTT");
                 break;
             case "camera/stop":
                 _isStreaming = false;
+                _databaseManager.SaveMessage("STOP_STREAM");
                 Broadcast("STOP_STREAM");
                 Console.WriteLine("Stop streaming command received from MQTT");
                 break;
@@ -120,11 +124,13 @@ public class WebSocketServerManager
             {
                 case "START_STREAM":
                     _isStreaming = true;
+                    _databaseManager.SaveMessage("START_STREAM");
                     Console.WriteLine("Start command received");
                     _mqttClient.PublishAsync("camera/start", "START_STREAM");
                     break;
                 case "STOP_STREAM":
                     _isStreaming = false;
+                    _databaseManager.SaveMessage("STOP_STREAM");
                     Console.WriteLine("Stop command received");
                     _mqttClient.PublishAsync("camera/stop", "STOP_STREAM");
                     break;
