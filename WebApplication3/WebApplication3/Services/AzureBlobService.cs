@@ -5,13 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using MyProject.Controllers;
 
 namespace MyProject.Services
 {
     public interface IAzureBlobService
     {
-        Task<List<ImagesController.ImageDto>> GetImagesAsync();
+        Task<List<ImageDto>> GetImagesAsync();
         Task<bool> DeleteImageAsync(string fileName);
         Task<string> UploadImageAsync(Stream imageStream, string timestamp);
     }
@@ -28,15 +27,15 @@ namespace MyProject.Services
             _blobServiceClient = new BlobServiceClient(uri);
         }
 
-        public async Task<List<ImagesController.ImageDto>> GetImagesAsync()
+        public async Task<List<ImageDto>> GetImagesAsync()
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient("iot-10sec-video");
-            var images = new List<ImagesController.ImageDto>();
+            var images = new List<ImageDto>();
 
             await foreach (var blobItem in containerClient.GetBlobsAsync())
             {
                 var uri = containerClient.GetBlobClient(blobItem.Name).Uri;
-                images.Add(new ImagesController.ImageDto { Url = uri.ToString(), FileName = blobItem.Name });
+                images.Add(new ImageDto { Url = uri.ToString(), FileName = blobItem.Name });
             }
 
             return images;
@@ -73,5 +72,11 @@ namespace MyProject.Services
                 return fileName;
             }
         }
+    }
+
+    public class ImageDto
+    {
+        public string Url { get; set; }
+        public string FileName { get; set; }
     }
 }

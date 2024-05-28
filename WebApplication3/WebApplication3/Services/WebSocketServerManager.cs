@@ -42,7 +42,7 @@ namespace MyProject.Services
             var options = new MqttClientOptionsBuilder()
                 .WithClientId("WebSocketServer")
                 .WithTcpServer("mqtt.flespi.io", 1883)
-                .WithCredentials("XZdrA3Fg1uvUT0OBDRWrsJMHXGFYFp9XrRg04fl7Z1NYzj3B9joYPAdss1wbmlg3", "XZdrA3Fg1uvUT0OBDRWrsJMHXGFYFp9XrRg04fl7Z1NYzj3B9joYPAdss1wbmlg3")
+                .WithCredentials("your-mqtt-username", "your-mqtt-password")
                 .Build();
 
             _mqttClient = new MqttFactory().CreateMqttClient();

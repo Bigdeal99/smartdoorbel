@@ -16,12 +16,6 @@ namespace MyProject.Controllers
             _blobService = blobService;
         }
 
-        public class ImageDto
-        {
-            public string Url { get; set; }
-            public string FileName { get; set; }
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetImages()
         {
