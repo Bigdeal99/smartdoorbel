@@ -8,10 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure services
 builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
-builder.WebHost.UseUrls("http://*:9999");
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8181";
 builder.Services.AddSingleton<WebSocketServerManager>(sp =>
-    new WebSocketServerManager("ws://0.0.0.0:"+port, builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var connectionString = config.GetConnectionString("DefaultConnection");
+    var wsLocation = "ws://0.0.0.0:8181";
+    return new WebSocketServerManager(wsLocation, connectionString);
+});
 
 // Add controllers
 builder.Services.AddControllers();
@@ -31,8 +34,11 @@ builder.Services.AddCors(options =>
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     var port = Environment.GetEnvironmentVariable("PORT");
-    serverOptions.ListenAnyIP(int.Parse(port ?? "5164"));
-    serverOptions.ListenAnyIP(7026, listenOptions => listenOptions.UseHttps());
+    if (string.IsNullOrEmpty(port))
+    {
+        throw new InvalidOperationException("The PORT environment variable is not set.");
+    }
+    serverOptions.ListenAnyIP(int.Parse(port));
 });
 
 var app = builder.Build();
@@ -54,7 +60,15 @@ app.UseEndpoints(endpoints =>
 });
 
 // Start WebSocket Server
-var webSocketServerManager = app.Services.GetRequiredService<WebSocketServerManager>();
-webSocketServerManager.Start();
+try
+{
+    var webSocketServerManager = app.Services.GetRequiredService<WebSocketServerManager>();
+    webSocketServerManager.Start();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error starting WebSocketServerManager: {ex.Message}");
+    throw;
+}
 
 app.Run();
