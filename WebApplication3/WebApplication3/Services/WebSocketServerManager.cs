@@ -18,11 +18,10 @@ namespace MyProject.Services
         private IMqttClient _mqttClient;
         private readonly string _connectionString;
 
-        public WebSocketServerManager(string location, string connectionString)
+        public WebSocketServerManager(string location)
         {
             _server = new WebSocketServer(location);
             _connections = new ConcurrentDictionary<IWebSocketConnection, string>();
-            _connectionString = connectionString;
             InitializeMqttClient().GetAwaiter().GetResult();
         }
 

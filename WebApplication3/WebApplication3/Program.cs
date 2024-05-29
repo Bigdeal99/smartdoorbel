@@ -13,13 +13,13 @@ var port = Environment.GetEnvironmentVariable("PORT") ?? "8181";
 builder.WebHost.UseUrls($"http://*:{port}");
 
 builder.Services.AddSingleton<WebSocketServerManager>(sp =>
-    new WebSocketServerManager($"ws://0.0.0.0:{port}", builder.Configuration.GetConnectionString("DefaultConnection")));
+    new WebSocketServerManager($"ws://0.0.0.0:{port}"));
 
 // Add controllers
 builder.Services.AddControllers();
 
 // Configure CORS
-builder.Services.AddCors(options =>
+/*builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
@@ -27,13 +27,12 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
-});
+});*/
 
 // Configure Kestrel
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(int.Parse(port));
-    // Removed HTTPS configuration
 });
 
 var app = builder.Build();
@@ -44,15 +43,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseCors();
-app.UseEndpoints(endpoints =>
+//app.UseCors();
+/*app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
     endpoints.MapGet("/", async context =>
     {
         await context.Response.WriteAsync("API and WebSocket server are running.");
     });
-});
+});*/
 
 // Start WebSocket Server
 var webSocketServerManager = app.Services.GetRequiredService<WebSocketServerManager>();
